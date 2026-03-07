@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 
+import 'home_view.dart';
+
 class AlarmView extends StatefulWidget {
   const AlarmView({super.key});
 
@@ -20,6 +22,12 @@ class _AlarmViewState extends State<AlarmView> {
         title: const Text('DRAGOTURKEY ALARMS'),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeView()),
+          ),
+        ),
       ),
       body: Center(
         child: Column(
