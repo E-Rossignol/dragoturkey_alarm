@@ -1,7 +1,11 @@
 import 'dart:math' as math;
 import 'package:dragoturkey_alarm/views/alarm_view.dart';
-import 'package:dragoturkey_alarm/views/serenity_ui_view.dart';
-import 'package:dragoturkey_alarm/views/stats_ui_view.dart';
+import 'package:dragoturkey_alarm/views/stats/abreuvoir_view.dart';
+import 'package:dragoturkey_alarm/views/stats/baffeur_view.dart';
+import 'package:dragoturkey_alarm/views/stats/caresseur_view.dart';
+import 'package:dragoturkey_alarm/views/stats/dragofesse_view.dart';
+import 'package:dragoturkey_alarm/views/stats/foudroyeur_view.dart';
+import 'package:dragoturkey_alarm/views/stats/mangeoire_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,7 +21,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.grey.shade600,
         title: const Text(
           'Dragoturkey Alarm',
           style: TextStyle(
@@ -37,48 +41,80 @@ class _HomeViewState extends State<HomeView> {
           )
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: SvgOptionCard(
-                      title: 'Sérénité',
-                      svgAssets: const [
-                        'assets/icons/feather-icon.svg',
-                        'assets/icons/slap-icon.svg',
-                      ],
-                      colors: const [Color(0xFF8EC5FF), Color(0xFFE0C3FC)],
-                      onTap: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => SerenityUiView()),
+      body: Container(
+        color: Colors.grey.shade400,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // la colonne prendra seulement la hauteur nécessaire
+              children: [
+                GridView.count(
+                  shrinkWrap: true, // la grille s'ajuste à son contenu
+                  physics: const NeverScrollableScrollPhysics(), // pas de scroll interne
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.9,
+                  children: [
+                    SvgOptionCard(
+                      title: 'Caresseur',
+                      svgAssets: ['assets/icons/feather-icon.svg'],
+                      colors: [Colors.purple.shade100, Colors.purple.shade200],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const CaresseurView()),
                       ),
-                      iconsPerRow: 2, // ligne horizontale centrée
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: SvgOptionCard(
-                      title: 'Statistiques',
-                      svgAssets: const [
-                        'assets/icons/thunder-icon.svg',
-                        'assets/icons/droplet-icon.svg',
-                        'assets/icons/heart-icon.svg',
-                        'assets/icons/wheat-icon.svg',
-                      ],
-                      colors: const [Color(0xFFFFD194), Color(0xFF70E1F5)],
-                      onTap: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => StatsUiView()),
+                    SvgOptionCard(
+                      title: 'Baffeur',
+                      svgAssets: ['assets/icons/slap-icon.svg'],
+                      colors: [Colors.orange.shade200, Colors.orange.shade300],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const BaffeurView()),
                       ),
-                      iconsPerRow: 2, // affichage en grille 2x2
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    SvgOptionCard(
+                      title: 'Dragofesse',
+                      svgAssets: ['assets/icons/heart-icon.svg'],
+                      colors: [Colors.red.shade200, Colors.red.shade300],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const DragofesseView()),
+                      ),
+                    ),
+                    SvgOptionCard(
+                      title: 'Foudroyeur',
+                      svgAssets: ['assets/icons/thunder-icon.svg'],
+                      colors: [Colors.yellow.shade300, Colors.yellow.shade400],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const FoudroyeurView()),
+                      ),
+                    ),
+                    SvgOptionCard(
+                      title: 'Abreuvoir',
+                      svgAssets: ['assets/icons/droplet-icon.svg'],
+                      colors: [Colors.blue.shade100, Colors.blue.shade200],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AbreuvoirView()),
+                      ),
+                    ),
+                    SvgOptionCard(
+                      title: 'Mangeoire',
+                      svgAssets: ['assets/icons/wheat-icon.svg'],
+                      colors: [Colors.green.shade200, Colors.green.shade300],
+                      iconsPerRow: 1,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const MangeoireView()),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -111,7 +147,8 @@ class SvgOptionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          height: 300, // hauteur fixe pour centrer verticalement les icônes
+          // Retire la hauteur fixe afin que la carte s'adapte dans la grille.
+          constraints: const BoxConstraints(minHeight: 140),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -123,22 +160,20 @@ class SvgOptionCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              SizedBox(
-                height: 50
-              ),
-              // Titre en haut
+              // Titre en haut, taille réduite
               Text(
                 title,
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 20, // réduit
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              // Espace dédié aux icônes, centré verticalement
+              const SizedBox(height: 6),
+              // Remonte les SVG : on aligne la zone d'icônes vers le haut pour qu'elles soient plus hautes dans la carte
               Expanded(
-                child: Center(
+                child: Align(
+                  alignment: Alignment.topCenter,
                   child: _buildIconsLayout(),
                 ),
               ),
