@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'package:dragoturkey_alarm/views/alarm_view.dart';
 import 'package:dragoturkey_alarm/views/stats/abreuvoir_view.dart';
 import 'package:dragoturkey_alarm/views/stats/baffeur_view.dart';
 import 'package:dragoturkey_alarm/views/stats/caresseur_view.dart';
@@ -30,16 +29,6 @@ class _HomeViewState extends State<HomeView> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.terminal_sharp, color: Colors.white),
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const AlarmView()),
-              );
-            }
-          )
-        ],
       ),
       body: Container(
         color: Colors.grey.shade400,

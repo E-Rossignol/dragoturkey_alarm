@@ -1,8 +1,11 @@
-int getStatTime(int actualStat, int wantedStat, int actualJauge){
-  int j = actualJauge;
+int getCaresseurTime(int actualSerenity, int wantedSerenity, int actualCaresseurJauge){
+  int j = actualCaresseurJauge;
   int time = 0;
-  bool isEnough = j - (actualStat-wantedStat).abs() > 0;
-  while(j > j - (actualStat-wantedStat).abs()){
+  bool isEnough = j - (actualSerenity-wantedSerenity).abs() > 0;
+  if (!isEnough){
+    return -1;
+  }
+  while(j > j - (actualSerenity-wantedSerenity).abs()){
     if (j > 90000){
       j -= 40;
     }
@@ -17,10 +20,10 @@ int getStatTime(int actualStat, int wantedStat, int actualJauge){
     }
     time += 10;
   }
-  return isEnough ? time : -time;
+  return time;
 }
 
 int getXpLevel (int actualLevel, int actualXp, int actualJauge){
-  // TODO: implémenter la fonction pour calculer le temps nécessaire pour atteindre le niveau final en fonction de l'XP actuel et de la jauge
+
   return 0;
 }
