@@ -1,4 +1,5 @@
 import 'package:dragoturkey_alarm/services/time_helper.dart';
+import 'package:dragoturkey_alarm/views/stats/baffeur_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,6 +31,23 @@ class _CaresseurViewState extends State<CaresseurView> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Beau fond dégradé rose/violet
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF9B59FF), // violet
+        title: const Text(
+          'Caresseur',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeView()),
+          ),
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -150,7 +168,40 @@ class _CaresseurViewState extends State<CaresseurView> {
       return false;
     }
     if (actualSerenity > wantedSerenity){
-      showSnackBar("La sérénité actuelle doit être inférieure ou égale à la sérénité souhaitée.");
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          content: SizedBox(
+              width: MediaQuery.of(context).size.width - 20,
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: Center(child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Les données de sérénité indiquées correspondent au baffeur.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ))),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Compris'),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(onPressed: (){
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const BaffeurView()),
+                );
+              }, child: const Text("Aller au baffeur"))
+            )
+          ],
+        ),
+      );
       return false;
     }
     if (actualJauge < 0 || actualJauge > 100000){
