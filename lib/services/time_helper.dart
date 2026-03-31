@@ -4,7 +4,7 @@ int getCaresseurTime(int actualSerenity, int wantedSerenity, int actualCaresseur
   int j = actualCaresseurJauge;
   int time = 0;
   int finalJaugeValue = j - (actualSerenity-wantedSerenity).abs();
-  bool isEnough = finalJaugeValue > 0;
+  bool isEnough = finalJaugeValue >= 0;
   if (!isEnough){
     return -1;
   }
@@ -29,11 +29,12 @@ int getCaresseurTime(int actualSerenity, int wantedSerenity, int actualCaresseur
 int getBaffeurTime(int actualSerenity, int wantedSerenity, int actualBaffeurJauge){
   int j = actualBaffeurJauge;
   int time = 0;
-  bool isEnough = j - (actualSerenity-wantedSerenity).abs() > 0;
+  int finalJaugeValue = j - (actualSerenity-wantedSerenity).abs();
+  bool isEnough = finalJaugeValue >= 0;
   if (!isEnough){
     return -1;
   }
-  while(j > j - (actualSerenity-wantedSerenity).abs()){
+  while(j > finalJaugeValue){
     if (j > 90000){
       j -= 40;
     }
@@ -51,14 +52,15 @@ int getBaffeurTime(int actualSerenity, int wantedSerenity, int actualBaffeurJaug
   return time;
 }
 
-int getDragofesseTime(int actualLove, int actualDragofesseJauge){
-  int j = actualDragofesseJauge;
+int getStatTime(int actualStat, int actualStatJauge){
+  int j = actualStatJauge;
   int time = 0;
-  bool isEnough = j - (actualLove-20000).abs() > 0;
+  int finalJaugeValue = j - (actualStat-20000).abs();
+  bool isEnough = finalJaugeValue >= 0;
   if (!isEnough){
     return -1;
   }
-  while(j > j - (actualLove-20000).abs()){
+  while(j > finalJaugeValue){
     if (j > 90000){
       j -= 40;
     }
