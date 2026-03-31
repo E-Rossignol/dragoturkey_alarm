@@ -1,5 +1,4 @@
 import 'package:dragoturkey_alarm/services/time_helper.dart';
-import 'package:dragoturkey_alarm/views/stats/baffeur_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,9 +32,9 @@ class _DragofesseViewState extends State<DragofesseView> {
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0xFFFFE6F0), // très clair rose
-            Color(0xFFFFB3D9),
-            Color(0xFFDA8BFF), // violet doux
+            Color(0xFFFFE6E6), // très clair rose
+            Color(0xFFFF6565),
+            Color(0xFFFF0000), // violet doux
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -150,7 +149,7 @@ class _DragofesseViewState extends State<DragofesseView> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFFCFE1F8), // violet
+                          backgroundColor: const Color(0xFFFFDCDC), // violet
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -204,7 +203,7 @@ class _DragofesseViewState extends State<DragofesseView> {
   void handleValues() {
     int? actualLove = int.tryParse(_actualLoveController.text);
     int? actualCaresseurJauge = int.tryParse(_actualJaugeController.text);
-    int seconds = getDragofesseTime(
+    int seconds = getStatTime(
       actualLove!,
       actualCaresseurJauge!,
     );

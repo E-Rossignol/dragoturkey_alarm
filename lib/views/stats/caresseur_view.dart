@@ -163,7 +163,7 @@ class _CaresseurViewState extends State<CaresseurView> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFFCFE1F8), // violet
+                          backgroundColor: const Color(0xFFFFDFFA), // violet
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
