@@ -14,9 +14,12 @@ class CaresseurView extends StatefulWidget {
 }
 
 class _CaresseurViewState extends State<CaresseurView> {
-  final TextEditingController _actualSerenityController = TextEditingController();
-  final TextEditingController _wantedSerenityController = TextEditingController();
+  final TextEditingController _actualSerenityController =
+  TextEditingController();
+  final TextEditingController _wantedSerenityController =
+  TextEditingController();
   final TextEditingController _actualJaugeController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,50 +32,50 @@ class _CaresseurViewState extends State<CaresseurView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Beau fond dégradé rose/violet
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF9B59FF), // violet
-        title: const Text(
-          'Caresseur',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const HomeView()),
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFFFE6F0), // très clair rose
+            Color(0xFFFFB3D9),
+            Color(0xFFDA8BFF), // violet doux
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFFFFE6F0), // très clair rose
-              Color(0xFFFFB3D9),
-              Color(0xFFDA8BFF), // violet doux
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(15, 12, 0, 0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.home_filled,
+                color: Colors.black87,
+                size: 35,
+              ),
+              onPressed: () => Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const HomeView()),
+              ),
+            ),
           ),
         ),
-        child: SafeArea(
+        body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
               // padding vertical réduit pour diminuer l'espace au-dessus du titre
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   mainAxisSize: MainAxisSize.min,
                   // centre horizontalement les enfants (les SizedBox contenant les champs)
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Titre simple au-dessus de l'image
                     const Text(
                       'Caresseur',
                       style: TextStyle(
@@ -86,7 +89,8 @@ class _CaresseurViewState extends State<CaresseurView> {
                     // Image SVG centrée sous le titre
                     Center(
                       child: SvgPicture.asset(
-                        'assets/icons/feather-icon.svg', // remplacez par le SVG souhaité
+                        'assets/icons/feather-icon.svg',
+                        // remplacez par le SVG souhaité
                         width: 120,
                         height: 120,
                         fit: BoxFit.contain,
@@ -118,7 +122,38 @@ class _CaresseurViewState extends State<CaresseurView> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: _buildNumberField(
                         controller: _actualJaugeController,
-                        label: 'Jauge de caresseur actuelle',
+                        label: 'Jauge de caresseur',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: TextFormField(
+                        controller: _titleController,
+
+                        // centre le texte saisi dans le champ
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        decoration: InputDecoration(
+                          labelText: "Titre (optionnel)",
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.4),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
+                          if (value == null || value.trim().isEmpty || value == '-') {
+                            return 'Champ requis';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -128,20 +163,20 @@ class _CaresseurViewState extends State<CaresseurView> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFF9B59FF), // violet
+                          backgroundColor: const Color(0xFFCFE1F8), // violet
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 4,
                         ),
                         onPressed: () {
-                          if (checkInputs()){
+                          if (checkInputs()) {
                             handleValues();
                           }
                         },
                         child: const Text(
                           'Valider',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ),
                     ),
@@ -154,27 +189,35 @@ class _CaresseurViewState extends State<CaresseurView> {
       ),
     );
   }
-  
-  bool checkInputs(){
-    int ? actualSerenity = int.tryParse(_actualSerenityController.text);
-    int ? wantedSerenity = int.tryParse(_wantedSerenityController.text);
-    int ? actualJauge = int.tryParse(_actualJaugeController.text);
-    if (actualJauge == null || actualSerenity == null || wantedSerenity == null){
+
+  bool checkInputs() {
+    int? actualSerenity = int.tryParse(_actualSerenityController.text);
+    int? wantedSerenity = int.tryParse(_wantedSerenityController.text);
+    int? actualJauge = int.tryParse(_actualJaugeController.text);
+    if (actualJauge == null ||
+        actualSerenity == null ||
+        wantedSerenity == null) {
       showSnackBar("Au moins une valeur est manquante.");
       return false;
     }
-    if (actualSerenity < -5000 ||actualSerenity > 5000 || wantedSerenity < -5000 || wantedSerenity > 5000){
-      showSnackBar("Les valeurs de sérénité doivent être comprises entre -5000 et 5000.");
+    if (actualSerenity < -5000 ||
+        actualSerenity > 5000 ||
+        wantedSerenity < -5000 ||
+        wantedSerenity > 5000) {
+      showSnackBar(
+        "Les valeurs de sérénité doivent être comprises entre -5000 et 5000.",
+      );
       return false;
     }
-    if (actualSerenity > wantedSerenity){
+    if (actualSerenity > wantedSerenity) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
           content: SizedBox(
-              width: MediaQuery.of(context).size.width - 20,
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: Center(child: Column(
+            width: MediaQuery.of(context).size.width - 20,
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: Center(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
@@ -183,53 +226,73 @@ class _CaresseurViewState extends State<CaresseurView> {
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
-              ))),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Compris'),
               ),
             ),
-            Center(
-              child: ElevatedButton(onPressed: (){
-                Navigator.of(ctx).pop();
-                Navigator.of(ctx).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const BaffeurView()),
-                );
-              }, child: const Text("Aller au baffeur"))
-            )
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Compris'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(ctx).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const BaffeurView()),
+                    );
+                  },
+                  child: const Text("Aller au baffeur"),
+                ),
+              ],
+            ),
           ],
         ),
       );
       return false;
     }
-    if (actualJauge < 0 || actualJauge > 100000){
-      showSnackBar("La jauge de caresseur doit être comprise entre 0 et 100000.");
+    if (actualJauge < 0 || actualJauge > 100000) {
+      showSnackBar(
+        "La jauge de caresseur doit être comprise entre 0 et 100000.",
+      );
       return false;
     }
     return true;
   }
 
-  void handleValues(){
-    int ? actualSerenity = int.tryParse(_actualSerenityController.text);
-    int ? wantedSerenity = int.tryParse(_wantedSerenityController.text);
-    int ? actualCaresseurJauge = int.tryParse(_actualJaugeController.text);
-    int seconds = getCaresseurTime(actualSerenity!, wantedSerenity!, actualCaresseurJauge!);
+  void handleValues() {
+    int? actualSerenity = int.tryParse(_actualSerenityController.text);
+    int? wantedSerenity = int.tryParse(_wantedSerenityController.text);
+    int? actualCaresseurJauge = int.tryParse(_actualJaugeController.text);
+    int seconds = getCaresseurTime(
+      actualSerenity!,
+      wantedSerenity!,
+      actualCaresseurJauge!,
+    );
     handleTimer(seconds);
   }
 
-  void handleTimer(int seconds){
+  void handleTimer(int seconds) {
     if (seconds == -1) {
-      int realValue = int.parse(_actualSerenityController.text) + int.parse(_actualJaugeController.text);
+      int realValue =
+          int.parse(_actualSerenityController.text) +
+              int.parse(_actualJaugeController.text);
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Center(child: const Text('Jauge insuffisante', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),)),
+          title: Center(
+            child: const Text(
+              'Jauge insuffisante',
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+          ),
           content: SizedBox(
-              width: MediaQuery.of(context).size.width - 20,
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: Center(child: Column(
+            width: MediaQuery.of(context).size.width - 20,
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: Center(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -240,10 +303,15 @@ class _CaresseurViewState extends State<CaresseurView> {
                   Text(
                     realValue.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
-              ))),
+              ),
+            ),
+          ),
           actions: [
             Center(
               child: ElevatedButton(
@@ -256,13 +324,16 @@ class _CaresseurViewState extends State<CaresseurView> {
       );
       return;
     }
-    print("Coucou");
+    else {
+      createTimer(seconds, _titleController.text);
+      showSnackBar("Alarme crée.");
+    }
   }
-  
-  void showSnackBar(String message){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Widget _buildNumberField({
@@ -273,11 +344,12 @@ class _CaresseurViewState extends State<CaresseurView> {
     return TextFormField(
       controller: controller,
       // clavier numérique avec signe autorisé
-      keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+      keyboardType: const TextInputType.numberWithOptions(
+        decimal: false,
+        signed: true,
+      ),
       // autorise uniquement chiffres et un tiret '-' initial (gestionée par le formatter ci-dessous)
-      inputFormatters: <TextInputFormatter>[
-        SignedNumberInputFormatter(),
-      ],
+      inputFormatters: <TextInputFormatter>[SignedNumberInputFormatter()],
       // centre le texte saisi dans le champ
       textAlign: TextAlign.center,
       style: const TextStyle(fontSize: 16, color: Colors.black87),
@@ -286,7 +358,10 @@ class _CaresseurViewState extends State<CaresseurView> {
         hintText: hint,
         filled: true,
         fillColor: Colors.white.withOpacity(0.9),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -309,7 +384,9 @@ class SignedNumberInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;
     }
