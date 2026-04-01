@@ -1,4 +1,4 @@
-import 'package:dragoturkey_alarm/services/time_helper.dart';
+import 'package:dragoturkey_alarm/services/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
