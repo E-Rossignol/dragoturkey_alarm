@@ -110,7 +110,7 @@ class _MangeoireViewState extends State<MangeoireView> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: _buildNumberField(
                         controller: _actualXpController,
-                        label: 'Xp actuellle',
+                        label: 'Xp actuelle',
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -160,7 +160,7 @@ class _MangeoireViewState extends State<MangeoireView> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFFDCE3FF), // violet
+                          backgroundColor: const Color(0xFFDCFFDF), // violet
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -226,16 +226,15 @@ class _MangeoireViewState extends State<MangeoireView> {
   }
 
   void handleTimer(int seconds) {
-    if (seconds == -1) {
-      int realValue =
-          int.parse(_actualXpController.text) +
-              int.parse(_actualJaugeController.text);
+    Map <String, int> res = getXpInfos(int.parse(_actualLevelController.text), int.parse(_actualXpController.text), int.parse(_actualJaugeController.text));
+    if (res['finalLevel'] != 200){
+      int realValue = res['finalLevel']!;
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
           title: Center(
             child: const Text(
-              'Jauge insuffisante',
+              'Jauge insuffisante pour le niveau 200',
               style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
           ),
@@ -247,7 +246,7 @@ class _MangeoireViewState extends State<MangeoireView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Maturité atteignable :",
+                    "Niveau atteignable :",
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 20),
                   ),
@@ -266,8 +265,26 @@ class _MangeoireViewState extends State<MangeoireView> {
           actions: [
             Center(
               child: ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Compris'),
+                onPressed: () {
+                  Map<String, int> res = createTimer(seconds, _titleController.text);
+                  int timerHours = res['hours']!;
+                  int timerMinutes = res['minutes']!;
+                  int timerSeconds = res['seconds']!;
+                  String title = _titleController.text;
+                  if (title.isEmpty){
+                    title = "";
+                  }
+                  String message = 'Timer "$title" créé: ';
+                  if (timerHours != 0){
+                    message += "$timerHours heures, ";
+                  }
+                  if (timerMinutes != 0){
+                    message += "$timerMinutes minutes, ";
+                  }
+                  message += "$timerSeconds secondes.";
+                  showSnackBar(message);
+                },
+                child: const Text('Créer le timer'),
               ),
             ),
           ],
@@ -284,7 +301,7 @@ class _MangeoireViewState extends State<MangeoireView> {
       if (title.isEmpty){
         title = "";
       }
-      String message = 'Timer "$title" créé: ';
+      String message = title.isEmpty ? 'Niveau 200 atteignable.\n\n Timer créé: ' : 'Niveau 200 atteignable.\n\n Timer "$title" créé: ';
       if (timerHours != 0){
         message += "$timerHours heures, ";
       }

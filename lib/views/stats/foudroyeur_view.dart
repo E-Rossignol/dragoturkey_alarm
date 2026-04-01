@@ -262,7 +262,7 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
     }
     else {
       createTimer(seconds, _titleController.text);
-      showSnackBar("Alarme crée.");
+      showSnackBar("Timer créé.");
     }
   }
 

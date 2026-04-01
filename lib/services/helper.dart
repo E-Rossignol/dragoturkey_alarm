@@ -114,7 +114,7 @@ Map<String, int> getXpInfos(int actualLevel, int actualXp, int actualMangeoireJa
     finalXp = xpTable[200]!;
   }
   int finalLevel = getLevel(finalXp);
-  int time = getMangeoireTime(actualXp, finalXp, actualMangeoireJauge);
+  int time = getMangeoireTime(totalCurrentXp, finalXp, actualMangeoireJauge);
   Map<String, int> result = {};
   result['finalLevel'] = finalLevel;
   result['finalXp'] = finalXp;

@@ -262,7 +262,7 @@ class _DragofesseViewState extends State<DragofesseView> {
     }
     else {
       createTimer(seconds, _titleController.text);
-      showSnackBar("Alarme crée.");
+      showSnackBar("Timer créé.");
     }
   }
 

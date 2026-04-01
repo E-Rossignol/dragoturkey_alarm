@@ -326,7 +326,7 @@ class _CaresseurViewState extends State<CaresseurView> {
     }
     else {
       createTimer(seconds, _titleController.text);
-      showSnackBar("Alarme crée.");
+      showSnackBar("Timer créé.");
     }
   }
 

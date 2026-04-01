@@ -203,7 +203,7 @@ const xpTable = <int, int>{
 
 int getLevel(int xp) {
   int res = 1;
-  while(xpTable[res]! > xp){
+  while(xpTable[res]! < xp){
     res++;
   }
   return res;
