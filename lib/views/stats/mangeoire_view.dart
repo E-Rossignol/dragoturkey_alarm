@@ -33,14 +33,9 @@ class _MangeoireViewState extends State<MangeoireView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFE9FFE6), // très clair rose
-            Color(0xFF6AFF65),
-            Color(0xFF22FF00), // violet doux
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_green.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(

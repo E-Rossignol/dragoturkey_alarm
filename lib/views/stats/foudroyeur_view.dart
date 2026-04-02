@@ -30,14 +30,9 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFFFBE6), // très clair rose
-            Color(0xFFFFDB65),
-            Color(0xFFFFCC00), // violet doux
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_yellow.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(

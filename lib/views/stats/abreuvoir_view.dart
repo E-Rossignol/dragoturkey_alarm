@@ -30,14 +30,9 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFE6E6FF), // très clair rose
-            Color(0xFF657FFF),
-            Color(0xFF0022FF), // violet doux
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_blue.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(

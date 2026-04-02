@@ -30,14 +30,9 @@ class _DragofesseViewState extends State<DragofesseView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFFE6E6), // très clair rose
-            Color(0xFFFF6565),
-            Color(0xFFFF0000), // violet doux
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_red.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(

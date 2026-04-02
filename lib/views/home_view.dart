@@ -20,7 +20,9 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.grey.shade400,
+        decoration: const BoxDecoration(
+          image: DecorationImage(image: AssetImage('assets/images/background.jpeg'), fit: BoxFit.cover),
+        ),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(18.0),
@@ -38,16 +40,17 @@ class _HomeViewState extends State<HomeView> {
                     SvgOptionCard(
                       title: 'Caresseur',
                       svgAssets: ['assets/icons/feather-icon.svg'],
-                      colors: [Colors.purple.shade100, Colors.purple.shade200],
+                      backgroundImage: 'assets/images/background_purple.jpeg', // <-- image JPEG en fond pour la première carte
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const CaresseurView()),
-                      ),
+                      ), colors: [],
                     ),
                     SvgOptionCard(
                       title: 'Baffeur',
                       svgAssets: ['assets/icons/slap-icon.svg'],
-                      colors: [Colors.orange.shade200, Colors.orange.shade300],
+                      backgroundImage: 'assets/images/background_orange.jpeg', // <-- image JPEG en fond pour la deuxième carte
+                      colors: [],
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const BaffeurView()),
@@ -56,7 +59,8 @@ class _HomeViewState extends State<HomeView> {
                     SvgOptionCard(
                       title: 'Dragofesse',
                       svgAssets: ['assets/icons/heart-icon.svg'],
-                      colors: [Colors.red.shade200, Colors.red.shade300],
+                      backgroundImage: 'assets/images/background_red.png',
+                      colors: [],
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const DragofesseView()),
@@ -65,7 +69,8 @@ class _HomeViewState extends State<HomeView> {
                     SvgOptionCard(
                       title: 'Foudroyeur',
                       svgAssets: ['assets/icons/thunder-icon.svg'],
-                      colors: [Colors.yellow.shade300, Colors.yellow.shade400],
+                      backgroundImage: 'assets/images/background_yellow.png',
+                      colors: [],
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const FoudroyeurView()),
@@ -74,7 +79,8 @@ class _HomeViewState extends State<HomeView> {
                     SvgOptionCard(
                       title: 'Abreuvoir',
                       svgAssets: ['assets/icons/droplet-icon.svg'],
-                      colors: [Colors.blue.shade100, Colors.blue.shade200],
+                      backgroundImage: 'assets/images/background_blue.png',
+                      colors: [],
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const AbreuvoirView()),
@@ -83,7 +89,8 @@ class _HomeViewState extends State<HomeView> {
                     SvgOptionCard(
                       title: 'Mangeoire',
                       svgAssets: ['assets/icons/wheat-icon.svg'],
-                      colors: [Colors.green.shade200, Colors.green.shade300],
+                      backgroundImage: 'assets/images/background_green.png',
+                      colors: [],
                       iconsPerRow: 1,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const MangeoireView()),
@@ -106,6 +113,7 @@ class SvgOptionCard extends StatelessWidget {
   final List<Color> colors;
   final VoidCallback onTap;
   final int iconsPerRow;
+  final String? backgroundImage; // ajouté
 
   const SvgOptionCard({
     super.key,
@@ -114,6 +122,7 @@ class SvgOptionCard extends StatelessWidget {
     required this.colors,
     required this.onTap,
     this.iconsPerRow = 2,
+    this.backgroundImage, // ajouté
   });
 
   @override
@@ -129,11 +138,20 @@ class SvgOptionCard extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 140),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: colors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            // si backgroundImage est fourni, on utilise l'image ; sinon on conserve le gradient
+            image: backgroundImage != null
+                ? DecorationImage(
+                    image: AssetImage(backgroundImage!),
+                    fit: BoxFit.cover,
+                  )
+                : null,
+            gradient: backgroundImage == null
+                ? LinearGradient(
+                    colors: colors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(

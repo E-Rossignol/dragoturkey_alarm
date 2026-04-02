@@ -34,15 +34,7 @@ class _CaresseurViewState extends State<CaresseurView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFFE6F0), // très clair rose
-            Color(0xFFFFB3D9),
-            Color(0xFFDA8BFF), // violet doux
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        image: DecorationImage(image: AssetImage('assets/images/background_purple.jpeg'), fit: BoxFit.cover),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,

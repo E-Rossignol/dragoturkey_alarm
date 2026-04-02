@@ -33,15 +33,10 @@ class _BaffeurViewState extends State<BaffeurView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFFE4CF), // rouge très clair
-            Color(0xFFFF9571), // rouge moyen
-            Color(0xFFB25000),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+          image: DecorationImage(
+            image: AssetImage('assets/images/background_orange.jpeg'),
+            fit: BoxFit.cover,
+          ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
