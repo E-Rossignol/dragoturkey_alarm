@@ -1,3 +1,4 @@
+import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../../services/timer_service.dart';
 
@@ -63,73 +64,78 @@ class _TimersViewState extends State<TimersView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DRAGOTURKEY TIMERS'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_white.png'),
+          fit: BoxFit.cover,
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Formulaire de création
-              TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Titre',
-                  hintText: 'Ex: Mon timer',
-                  border: OutlineInputBorder(),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
+        appBar: CustomAppBar(),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 4
                 ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 48,
-                    width: 120,
-                    child: TextField(
-                      controller: hourController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          hintText: 'Heures', border: OutlineInputBorder()),
-                    ),
+                // Formulaire de création
+                TextFormField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Titre',
+                    hintText: 'Ex: Mon timer',
+                    border: OutlineInputBorder(),
                   ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    height: 48,
-                    width: 120,
-                    child: TextField(
-                      controller: minuteController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: 'Minutes',
-                        border: OutlineInputBorder(),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 48,
+                      width: 120,
+                      child: TextField(
+                        controller: hourController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            hintText: 'Heures', border: OutlineInputBorder()),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: _createLocalTimer,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      height: 48,
+                      width: 120,
+                      child: TextField(
+                        controller: minuteController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Minutes',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                    child: const Text('Créer'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              // Liste des timers actifs
-              Expanded(
-                child: _buildTimersList(),
-              ),
-            ],
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: _createLocalTimer,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      child: const Text('Créer'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                // Liste des timers actifs
+                Expanded(
+                  child: _buildTimersList(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
