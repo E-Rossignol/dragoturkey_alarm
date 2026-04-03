@@ -36,6 +36,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +64,18 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/fonts/gimp_mousewriting/
 
+  fonts:
+    - family: GimpMouseWriting
+      fonts:
+        - asset: assets/fonts/gimp_mousewriting/Gimp_Mousewriting.ttf
+    - family: Jraot
+      fonts:
+        - asset: assets/fonts/jraot/Jraot-Regular.ttf
+        - asset: assets/fonts/jraot/Jraot-Extrude.ttf
+        - asset: assets/fonts/jraot/Jraot-Hollow.ttf
+        - asset: assets/fonts/jraot/Jraot-Outline.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

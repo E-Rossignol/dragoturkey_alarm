@@ -5,6 +5,7 @@ import 'package:dragoturkey_alarm/views/stats/caresseur_view.dart';
 import 'package:dragoturkey_alarm/views/stats/dragofesse_view.dart';
 import 'package:dragoturkey_alarm/views/stats/foudroyeur_view.dart';
 import 'package:dragoturkey_alarm/views/stats/mangeoire_view.dart';
+import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -19,6 +20,11 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(),
+      backgroundColor: Colors
+          .transparent, // <-- rendre le scaffold transparent pour laisser le fond parent visible
+      extendBodyBehindAppBar:
+          true, // <-- permet au body d'être rendu derrière l'appbar (visible sous la bar)
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(image: AssetImage('assets/images/background.jpeg'), fit: BoxFit.cover),

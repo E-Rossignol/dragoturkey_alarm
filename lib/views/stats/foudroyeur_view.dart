@@ -1,9 +1,8 @@
 import 'package:dragoturkey_alarm/services/helper.dart';
+import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../home_view.dart';
 
 class FoudroyeurView extends StatefulWidget {
   const FoudroyeurView({super.key});
@@ -38,23 +37,7 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 12, 0, 0),
-            child: IconButton(
-              icon: const Icon(
-                Icons.home_filled,
-                color: Colors.black87,
-                size: 35,
-              ),
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const HomeView()),
-              ),
-            ),
-          ),
-        ),
+        appBar: CustomAppBar(),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -216,7 +199,7 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
           title: Center(
             child: const Text(
               'Jauge insuffisante',
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
           ),
           content: SizedBox(
