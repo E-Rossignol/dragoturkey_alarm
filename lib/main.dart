@@ -1,5 +1,5 @@
-import 'package:dragoturkey_alarm/views/home_view.dart';
-import 'package:dragoturkey_alarm/views/timers_view.dart';
+import 'package:dragoturkey_alarm/views/routes/home_view.dart';
+import 'package:dragoturkey_alarm/views/routes/timers_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
