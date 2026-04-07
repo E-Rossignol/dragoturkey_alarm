@@ -8,6 +8,10 @@ import 'package:dragoturkey_alarm/views/stats/mangeoire_view.dart';
 import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:timezone/data/latest.dart';
+import 'package:timezone/timezone.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -17,6 +21,24 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  Future<void> init() async{
+    // initialisation de la timezone pour les notifications
+    initializeTimeZones();
+    setLocalLocation(getLocation('Europe/Paris'));
+    const androidSettings = AndroidInitializationSettings('@mipmap/dofalarm_launcher');
+    const initializationSettings = InitializationSettings(android: androidSettings);
+    await notificationsPlugin.initialize(initializationSettings);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
