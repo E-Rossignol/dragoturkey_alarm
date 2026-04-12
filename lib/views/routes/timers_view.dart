@@ -21,11 +21,22 @@ class _TimersViewState extends State<TimersView> {
   @override
   void initState() {
     super.initState();
+    // Lance l'initialisation (async) qui ajoute le listener et initialise la notif.
+    // Utiliser Future.microtask pour ne pas rendre initState async.
+    Future.microtask(() => init());
+
+    // Assurer un premier rebuild : si TimerService a déjà chargé les timers avant qu'on
+    // n'ajoute le listener, on force un setState pour afficher l'état actuel.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   Future<void> init() async {
     await NotificationService().initNotification();
     _service.addListener(_onTimersUpdated);
+    // après l'ajout du listener, forcer un update pour récupérer l'état courant
+    if (mounted) setState(() {});
   }
 
   @override
@@ -63,6 +74,7 @@ class _TimersViewState extends State<TimersView> {
     minuteController.clear();
     secondController.clear();
     titleController.clear();
+    // setState isn't required ici car TimerService appelle notifyListeners() et notre listener déclenche setState.
   }
 
   void _showErrorDialog(String message) {
@@ -159,7 +171,8 @@ class _TimersViewState extends State<TimersView> {
                       child: const Text('Créer'),
                     ),
                   ],
-                ),                const SizedBox(height: 24),
+                ),
+                const SizedBox(height: 24),
                 // Liste des timers actifs
                 Expanded(child: _buildTimersList()),
               ],

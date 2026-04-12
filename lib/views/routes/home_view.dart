@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'package:dragoturkey_alarm/services/timer_service.dart';
 import 'package:dragoturkey_alarm/views/stats/abreuvoir_view.dart';
 import 'package:dragoturkey_alarm/views/stats/baffeur_view.dart';
 import 'package:dragoturkey_alarm/views/stats/caresseur_view.dart';
