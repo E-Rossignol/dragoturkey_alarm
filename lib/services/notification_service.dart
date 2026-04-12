@@ -75,7 +75,7 @@ class NotificationService {
       body,
       scheduledDate,
       _notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 }

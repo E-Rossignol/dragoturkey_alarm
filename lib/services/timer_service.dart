@@ -86,7 +86,7 @@ class TimerService extends ChangeNotifier {
     notificationService.initNotification(); // s'assure que le service de notification est prêt
     await notificationService.scheduleNotification(
       id: now%100000, // id numérique pour la notification
-      title: 'title',
+      title: title,
       body: 'Votre dragodinde est prête !',
       delay: Duration(seconds: durationSeconds),
     );
