@@ -42,6 +42,20 @@ class _NotificationsViewState extends State<NotificationsView> {
   );
   }
 
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    String? body,
+    required Duration delay,
+}) async {
+    TZDateTime now = TZDateTime.now(local);
+    TZDateTime scheduledDate = now.add(delay);
+
+    await notificationsPlugin.zonedSchedule(id, title, body, scheduledDate, const NotificationDetails(
+      android: AndroidNotificationDetails('daily_reminder_channel_id', 'Daily Reminders', channelDescription: 'Reminder to complete daily habits', importance: Importance.max, priority: Priority.high)
+    ),androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle, matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +75,13 @@ class _NotificationsViewState extends State<NotificationsView> {
                 icon: const Icon(Icons.notifications_active, color: Colors.green, size: 50)),
             SizedBox(height: 20),
             IconButton(
-                onPressed: (){
-
+                onPressed: () async {
+                  await scheduleNotification(
+                    id: DateTime.now().millisecondsSinceEpoch ~/ 1000, // id unique basé sur le timestamp actuel
+                    title: 'Notification programmée',
+                    body: 'Ceci est une notification qui apparaîtra dans 15 secondes.',
+                    delay: const Duration(seconds: 15)
+                  );
                 },
                 icon: const Icon(Icons.notifications_active, color: Colors.red, size: 50)),
 
