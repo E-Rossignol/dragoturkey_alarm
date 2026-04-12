@@ -1,3 +1,4 @@
+import 'package:dragoturkey_alarm/services/notification_service.dart';
 import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../../services/timer_service.dart';
@@ -12,12 +13,18 @@ class TimersView extends StatefulWidget {
 class _TimersViewState extends State<TimersView> {
   final TextEditingController hourController = TextEditingController();
   final TextEditingController minuteController = TextEditingController();
+  final TextEditingController secondController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
   final TimerService _service = TimerService();
+  NotificationService notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> init() async {
+    await NotificationService().initNotification();
     _service.addListener(_onTimersUpdated);
   }
 
@@ -26,6 +33,7 @@ class _TimersViewState extends State<TimersView> {
     _service.removeListener(_onTimersUpdated);
     hourController.dispose();
     minuteController.dispose();
+    secondController.dispose();
     titleController.dispose();
     super.dispose();
   }
@@ -36,17 +44,24 @@ class _TimersViewState extends State<TimersView> {
 
   Future<void> _createLocalTimer() async {
     final hours = int.tryParse(hourController.text.replaceAll(' ', '')) ?? 0;
-    final minutes = int.tryParse(minuteController.text.replaceAll(' ', '')) ?? 0;
-    final secondsTotal = hours * 3600 + minutes * 60;
+    final minutes =
+        int.tryParse(minuteController.text.replaceAll(' ', '')) ?? 0;
+    final seconds =
+        int.tryParse(secondController.text.replaceAll(' ', '')) ?? 0;
+    final secondsTotal = hours * 3600 + minutes * 60 + seconds;
     if (secondsTotal <= 0) {
       _showErrorDialog('Veuillez saisir une durée valide (> 0).');
       return;
     }
-    final title = titleController.text.trim().isEmpty ? 'Timer' : titleController.text.trim();
+    final title = titleController.text.trim().isEmpty
+        ? 'Timer'
+        : titleController.text.trim();
+    WidgetsFlutterBinding.ensureInitialized();
     await _service.createTimer(title: title, durationSeconds: secondsTotal);
     // clear inputs
     hourController.clear();
     minuteController.clear();
+    secondController.clear();
     titleController.clear();
   }
 
@@ -56,7 +71,10 @@ class _TimersViewState extends State<TimersView> {
       builder: (context) => AlertDialog(
         content: Text(message),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );
@@ -80,9 +98,7 @@ class _TimersViewState extends State<TimersView> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                SizedBox(
-                  height: 4
-                ),
+                SizedBox(height: 4),
                 // Formulaire de création
                 TextFormField(
                   controller: titleController,
@@ -98,23 +114,38 @@ class _TimersViewState extends State<TimersView> {
                   children: [
                     SizedBox(
                       height: 48,
-                      width: 120,
+                      width: 80,
                       child: TextField(
                         controller: hourController,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                            hintText: 'Heures', border: OutlineInputBorder()),
+                          hintText: 'Heures',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     SizedBox(
                       height: 48,
-                      width: 120,
+                      width: 80,
                       child: TextField(
                         controller: minuteController,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           hintText: 'Minutes',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      height: 48,
+                      width: 80,
+                      child: TextField(
+                        controller: secondController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Secondes',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -128,12 +159,9 @@ class _TimersViewState extends State<TimersView> {
                       child: const Text('Créer'),
                     ),
                   ],
-                ),
-                const SizedBox(height: 18),
+                ),                const SizedBox(height: 24),
                 // Liste des timers actifs
-                Expanded(
-                  child: _buildTimersList(),
-                ),
+                Expanded(child: _buildTimersList()),
               ],
             ),
           ),
@@ -154,7 +182,9 @@ class _TimersViewState extends State<TimersView> {
         final at = timers[index];
         return ListTile(
           title: Text(at.entry.title),
-          subtitle: Text('Temps restant : ${TimerService.formatDuration(at.remainingSeconds)}'),
+          subtitle: Text(
+            'Temps restant : ${TimerService.formatDuration(at.remainingSeconds)}',
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

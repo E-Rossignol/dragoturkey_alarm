@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'notification_service.dart';
 
 class TimerEntry {
   final String id;
@@ -51,7 +54,7 @@ class TimerService extends ChangeNotifier {
   factory TimerService() => _instance;
 
   static const String _prefsKey = 'local_timers_v1';
-
+  NotificationService notificationService = NotificationService();
   final Map<String, TimerEntry> _entries = {};
   final Map<String, Timer> _tickers = {};
   final Map<String, int> _remaining = {};
@@ -78,6 +81,16 @@ class TimerService extends ChangeNotifier {
       createdAtMillis: now,
       durationSeconds: durationSeconds,
     );
+    // programmer notification
+    WidgetsFlutterBinding.ensureInitialized();
+    notificationService.initNotification(); // s'assure que le service de notification est prêt
+    await notificationService.scheduleNotification(
+      id: now%100000, // id numérique pour la notification
+      title: 'title',
+      body: 'Votre dragodinde est prête !',
+      delay: Duration(seconds: durationSeconds),
+    );
+    print("Notification programmée pour $durationSeconds secondes");
     _entries[id] = entry;
     final remaining = durationSeconds;
     _remaining[id] = remaining;
@@ -98,6 +111,7 @@ class TimerService extends ChangeNotifier {
 
   // Charge depuis SharedPreferences et recrée les tickers nécessaires
   Future<void> _loadFromPrefs() async {
+    notificationService.initNotification(); // s'assure que le service de notification est prêt
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_prefsKey);
@@ -144,7 +158,6 @@ class TimerService extends ChangeNotifier {
   void _startTickerFor(String id) {
     // Si déjà un ticker, on ne démarre pas un autre
     if (_tickers.containsKey(id)) return;
-
     _tickers[id] = Timer.periodic(const Duration(seconds: 1), (t) async {
       if (!_entries.containsKey(id)) {
         t.cancel();
@@ -153,7 +166,6 @@ class TimerService extends ChangeNotifier {
       }
       final cur = (_remaining[id] ?? _computeRemainingForEntry(_entries[id]!)) - 1;
       if (cur <= 0) {
-        // timer terminé : nettoyage
         t.cancel();
         _tickers.remove(id);
         _entries.remove(id);

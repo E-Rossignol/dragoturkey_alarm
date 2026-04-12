@@ -1,5 +1,4 @@
 import 'package:dragoturkey_alarm/views/routes/home_view.dart';
-import 'package:dragoturkey_alarm/views/routes/notifications_view.dart';
 import 'package:dragoturkey_alarm/views/routes/timers_view.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +17,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomeView(), // route nommée pour la page d'accueil
         '/timers': (context) => const TimersView(), // route nommée pour la liste des timers
-        '/notifs': (context) => const NotificationsView(), // route nommée pour la liste des notifications
       },
       debugShowCheckedModeBanner: false,
       title: 'DOFALARM',

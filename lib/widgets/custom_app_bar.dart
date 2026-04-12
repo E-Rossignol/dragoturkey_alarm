@@ -40,12 +40,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.of(context).pushNamed('/timers');
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_active, color: Colors.black, size: 40),
-            onPressed: () {
-              Navigator.of(context).pushNamed('/notifs');
-            },
-          ),
         ],
       ),
     );
