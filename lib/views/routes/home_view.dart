@@ -2,6 +2,10 @@ import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+/// Home view displaying navigation pills for different features.
+///
+/// This view presents the main menu with options to access different
+/// timer and stat management features (Caresseur, Baffeur, etc.).
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -10,10 +14,13 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
+  /// Build the home view UI with navigation pills.
+  ///
+  /// Returns: Widget representing the home screen.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Define menu options with titles, icons, and routes
     final options = [
       {
         'title': 'Caresseur',
@@ -21,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/feather-icon.svg',
         'bg': 'assets/images/background_purple.jpeg',
         'route': 'caresseur',
-        'gradient': [Color(0xFF2E8B57), Color(0xFF6FCF97)]
+        'gradient': [Color(0xFF2E8B57), Color(0xFF6FCF97)],
       },
       {
         'title': 'Baffeur',
@@ -29,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/slap-icon.svg',
         'bg': 'assets/images/background_orange.jpeg',
         'route': 'baffeur',
-        'gradient': [Color(0xFF6A4FB0), Color(0xFFB58FF0)]
+        'gradient': [Color(0xFF6A4FB0), Color(0xFFB58FF0)],
       },
       {
         'title': 'Dragofesse',
@@ -37,7 +44,7 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/heart-icon.svg',
         'bg': 'assets/images/background_red.png',
         'route': 'dragofesse',
-        'gradient': [Color(0xFF2B6EA3), Color(0xFF7BC6FF)]
+        'gradient': [Color(0xFF2B6EA3), Color(0xFF7BC6FF)],
       },
       {
         'title': 'Foudroyeur',
@@ -45,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/thunder-icon.svg',
         'bg': 'assets/images/background_yellow.png',
         'route': 'foudroyeur',
-        'gradient': [Color(0xFFB86B2A), Color(0xFFFFC38A)]
+        'gradient': [Color(0xFFB86B2A), Color(0xFFFFC38A)],
       },
       {
         'title': 'Abreuvoir',
@@ -53,7 +60,7 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/droplet-icon.svg',
         'bg': 'assets/images/background_blue.png',
         'route': 'abreuvoir',
-        'gradient': [Color(0xFFB65D8A), Color(0xFFFF9AC7)]
+        'gradient': [Color(0xFFB65D8A), Color(0xFFFF9AC7)],
       },
       {
         'title': 'Mangeoire',
@@ -61,16 +68,23 @@ class _HomeViewState extends State<HomeView> {
         'icon': 'assets/icons/wheat-icon.svg',
         'bg': 'assets/images/background_green.png',
         'route': 'mangeoire',
-        'gradient': [Color(0xFF2E9BBF), Color(0xFFA7E0FF)]
+        'gradient': [Color(0xFF2E9BBF), Color(0xFFA7E0FF)],
       },
     ];
 
+    /// Build a single navigation pill widget.
+    ///
+    /// Parameters:
+    /// - item: Map containing pill configuration (title, icon, route, etc).
+    ///
+    /// Returns: Widget - A styled pill button.
     Widget buildPill(Map item) {
       final gradientColors = List<Color>.from(item['gradient']);
       return Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
+            // Navigate to the selected feature
             Navigator.pushNamed(context, '/${item['route']}');
           },
           borderRadius: BorderRadius.circular(40),
@@ -86,7 +100,10 @@ class _HomeViewState extends State<HomeView> {
               image: DecorationImage(
                 image: AssetImage(item['bg']),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.15), BlendMode.overlay),
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.15),
+                  BlendMode.overlay,
+                ),
               ),
               boxShadow: [
                 BoxShadow(
@@ -101,7 +118,10 @@ class _HomeViewState extends State<HomeView> {
                   offset: Offset(0, -1),
                 ),
               ],
-              border: Border.all(color: Colors.white.withOpacity(0.06), width: 1.2),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.06),
+                width: 1.2,
+              ),
             ),
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -113,7 +133,10 @@ class _HomeViewState extends State<HomeView> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white.withOpacity(0.12),
-                    border: Border.all(color: Colors.white.withOpacity(0.14), width: 1.6),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.14),
+                      width: 1.6,
+                    ),
                   ),
                   child: Center(
                     child: SizedBox(
@@ -140,7 +163,13 @@ class _HomeViewState extends State<HomeView> {
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          shadows: [Shadow(color: Colors.black.withOpacity(0.4), offset: Offset(0, 2), blurRadius: 4)],
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.4),
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 6),
@@ -185,13 +214,15 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               children: [
                 SizedBox(height: 26),
-                // Liste d'options
+                // Build menu pills list
                 Column(
                   children: options
-                      .map((o) => Padding(
-                    padding: const EdgeInsets.only(bottom: 25.0),
-                    child: buildPill(o),
-                  ))
+                      .map(
+                        (o) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: buildPill(o),
+                        ),
+                      )
                       .toList(),
                 ),
                 SizedBox(height: 24),

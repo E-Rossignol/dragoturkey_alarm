@@ -7,11 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'notification_service.dart';
 
+/// Data model representing a stored timer entry.
 class TimerEntry {
   final String id;
   final String title;
   final int createdAtMillis;
-  final int durationSeconds; // durée totale en secondes
+  final int durationSeconds;
 
   TimerEntry({
     required this.id,
@@ -20,35 +21,46 @@ class TimerEntry {
     required this.durationSeconds,
   });
 
+  /// Create a TimerEntry from a JSON map.
+  ///
+  /// Parameters:
+  /// - json: Map containing serialized TimerEntry data.
+  ///
+  /// Returns: TimerEntry instance.
   factory TimerEntry.fromJson(Map<String, dynamic> json) => TimerEntry(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        createdAtMillis: json['createdAtMillis'] as int,
-        durationSeconds: json['durationSeconds'] as int,
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    createdAtMillis: json['createdAtMillis'] as int,
+    durationSeconds: json['durationSeconds'] as int,
+  );
 
+  /// Serialize this TimerEntry to a JSON map.
+  ///
+  /// Returns: Map<String, dynamic> - JSON representation.
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'createdAtMillis': createdAtMillis,
-        'durationSeconds': durationSeconds,
-      };
+    'id': id,
+    'title': title,
+    'createdAtMillis': createdAtMillis,
+    'durationSeconds': durationSeconds,
+  };
 }
 
+/// Active timer with remaining seconds calculated in real-time.
 class ActiveTimer {
   final TimerEntry entry;
   int remainingSeconds;
 
-  ActiveTimer({
-    required this.entry,
-    required this.remainingSeconds,
-  });
+  ActiveTimer({required this.entry, required this.remainingSeconds});
 }
 
+/// Service managing local timers with persistence and notifications.
+///
+/// Singleton service that handles timer creation, storage, and lifecycle management.
+/// Timers persist across app restarts using SharedPreferences.
 class TimerService extends ChangeNotifier {
-  // Singleton
+  // Singleton setup
   TimerService._internal() {
-    _loadFromPrefs(); // lance le chargement asynchrone sans bloquer
+    _loadFromPrefs();
   }
   static final TimerService _instance = TimerService._internal();
   factory TimerService() => _instance;
@@ -59,33 +71,41 @@ class TimerService extends ChangeNotifier {
   final Map<String, Timer> _tickers = {};
   final Map<String, int> _remaining = {};
 
-  // Retourne la liste actuelle des timers actifs (avec remaining calculé)
+  /// Get list of active timers sorted by remaining time (ascending).
+  ///
+  /// Returns: List<ActiveTimer> - Active timers with current remaining seconds.
   List<ActiveTimer> get activeTimers {
     return _entries.values.map((e) {
-      final rem = _remaining[e.id] ?? _computeRemainingForEntry(e);
-      return ActiveTimer(entry: e, remainingSeconds: rem);
-    }).toList()
+        final rem = _remaining[e.id] ?? _computeRemainingForEntry(e);
+        return ActiveTimer(entry: e, remainingSeconds: rem);
+      }).toList()
       ..sort((a, b) => a.remainingSeconds.compareTo(b.remainingSeconds));
   }
 
-  // Crée un timer local et le persiste
+  /// Create a new local timer and persist it.
+  ///
+  /// Parameters:
+  /// - title: Display title for the timer.
+  /// - durationSeconds: Total duration in seconds.
+  ///
+  /// Returns: Future<void>
   Future<void> createTimer({
     required String title,
     required int durationSeconds,
   }) async {
     final now = DateTime.now().millisecondsSinceEpoch;
-    final id = now.toString(); // identifiant simple
+    final id = now.toString();
     final entry = TimerEntry(
       id: id,
       title: title,
       createdAtMillis: now,
       durationSeconds: durationSeconds,
     );
-    // programmer notification
+    // Initialize notification service and schedule notification
     WidgetsFlutterBinding.ensureInitialized();
-    notificationService.initNotification(); // s'assure que le service de notification est prêt
+    notificationService.initNotification();
     await notificationService.scheduleNotification(
-      id: now%100000, // id numérique pour la notification
+      id: now % 100000,
       title: title,
       body: 'Votre dragodinde est prête !',
       delay: Duration(seconds: durationSeconds),
@@ -99,8 +119,14 @@ class TimerService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Annule et supprime un timer
+  /// Cancel and remove a timer by ID.
+  ///
+  /// Parameters:
+  /// - id: The timer ID to cancel.
+  ///
+  /// Returns: Future<void>
   Future<void> cancelTimer(String id) async {
+    // Stop ticker and remove from tracking maps
     _tickers[id]?.cancel();
     _tickers.remove(id);
     _entries.remove(id);
@@ -109,9 +135,11 @@ class TimerService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Charge depuis SharedPreferences et recrée les tickers nécessaires
+  /// Load timers from SharedPreferences and recreate tickers.
+  ///
+  /// Returns: Future<void>
   Future<void> _loadFromPrefs() async {
-    notificationService.initNotification(); // s'assure que le service de notification est prêt
+    notificationService.initNotification();
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_prefsKey);
@@ -120,6 +148,7 @@ class TimerService extends ChangeNotifier {
       final now = DateTime.now().millisecondsSinceEpoch;
       bool changed = false;
 
+      // Restore timers and filter out expired ones
       for (final item in list) {
         final Map<String, dynamic> m = Map<String, dynamic>.from(item);
         final entry = TimerEntry.fromJson(m);
@@ -130,7 +159,7 @@ class TimerService extends ChangeNotifier {
           _remaining[entry.id] = remaining;
           _startTickerFor(entry.id);
         } else {
-          // timer déjà expiré -> on n'ajoute pas ; on marque changement pour nettoyer le stockage
+          // Timer already expired; mark for cleanup
           changed = true;
         }
       }
@@ -140,23 +169,30 @@ class TimerService extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      // ignore errors silently for now
+      // Silently ignore loading errors
       if (kDebugMode) {
         print('TimerService: failed to load timers: $e');
       }
     }
   }
 
-  // Persiste la liste actuelle d'entries (sans remaining) dans SharedPreferences
+  /// Persist current timer entries to SharedPreferences.
+  ///
+  /// Returns: Future<void>
   Future<void> _persistToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final list = _entries.values.map((e) => e.toJson()).toList();
     await prefs.setString(_prefsKey, json.encode(list));
   }
 
-  // Démarre un ticker qui décrémente remaining chaque seconde
+  /// Start a periodic ticker for a timer to decrement remaining seconds.
+  ///
+  /// Parameters:
+  /// - id: Timer ID to start ticker for.
+  ///
+  /// Returns: void
   void _startTickerFor(String id) {
-    // Si déjà un ticker, on ne démarre pas un autre
+    // Skip if ticker already exists
     if (_tickers.containsKey(id)) return;
     _tickers[id] = Timer.periodic(const Duration(seconds: 1), (t) async {
       if (!_entries.containsKey(id)) {
@@ -164,8 +200,11 @@ class TimerService extends ChangeNotifier {
         _tickers.remove(id);
         return;
       }
-      final cur = (_remaining[id] ?? _computeRemainingForEntry(_entries[id]!)) - 1;
+      // Decrement remaining seconds
+      final cur =
+          (_remaining[id] ?? _computeRemainingForEntry(_entries[id]!)) - 1;
       if (cur <= 0) {
+        // Timer expired; cleanup
         t.cancel();
         _tickers.remove(id);
         _entries.remove(id);
@@ -179,13 +218,24 @@ class TimerService extends ChangeNotifier {
     });
   }
 
+  /// Compute remaining seconds for a timer entry based on creation time.
+  ///
+  /// Parameters:
+  /// - e: TimerEntry to compute remaining time for.
+  ///
+  /// Returns: int - Remaining seconds (0 if timer has expired).
   int _computeRemainingForEntry(TimerEntry e) {
     final now = DateTime.now().millisecondsSinceEpoch;
     final rem = e.durationSeconds - ((now - e.createdAtMillis) ~/ 1000);
     return rem > 0 ? rem : 0;
   }
 
-  // Pour usage UI : format "HH:MM:SS" à partir de seconds
+  /// Format seconds into HH:MM:SS or MM:SS format.
+  ///
+  /// Parameters:
+  /// - seconds: Total seconds to format.
+  ///
+  /// Returns: String - Formatted duration.
   static String formatDuration(int seconds) {
     final h = seconds ~/ 3600;
     final m = (seconds % 3600) ~/ 60;
@@ -197,8 +247,11 @@ class TimerService extends ChangeNotifier {
     }
   }
 
-  // Nettoyage complet (utile pour les tests)
+  /// Clear all timers and reset service state.
+  ///
+  /// Returns: Future<void>
   Future<void> clearAll() async {
+    // Cancel all running tickers
     for (final t in _tickers.values) {
       t.cancel();
     }

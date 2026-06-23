@@ -1,3 +1,5 @@
+/// Experience table mapping levels to required XP thresholds.
+/// Each level requires a certain amount of total XP to reach.
 const xpTable = <int, int>{
   1: 0,
   2: 19,
@@ -201,9 +203,19 @@ const xpTable = <int, int>{
   200: 867582,
 };
 
+/// Retrieve the level corresponding to a given total XP value.
+///
+/// This function iterates through the experience table to find the first level
+/// for which the required XP threshold is greater than or equal to the input XP.
+///
+/// Parameters:
+/// - xp: The total experience points.
+///
+/// Returns: int - The level corresponding to the given XP value.
 int getLevel(int xp) {
+  // Find the first level where xpTable[level] >= xp
   int res = 1;
-  while(xpTable[res]! < xp){
+  while (xpTable[res]! < xp) {
     res++;
   }
   return res;

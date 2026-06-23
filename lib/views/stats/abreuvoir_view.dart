@@ -3,6 +3,7 @@ import 'package:dragoturkey_alarm/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 class AbreuvoirView extends StatefulWidget {
   const AbreuvoirView({super.key});
 
@@ -12,11 +13,14 @@ class AbreuvoirView extends StatefulWidget {
 
 class _AbreuvoirViewState extends State<AbreuvoirView> {
   final TextEditingController _actualMaturiteController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _actualJaugeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  /// Dispose of text controllers to free resources.
+  ///
+  /// Returns: void
   @override
   void dispose() {
     _actualMaturiteController.dispose();
@@ -24,6 +28,12 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
     super.dispose();
   }
 
+  /// Build the widget tree for the Abreuvoir view.
+  ///
+  /// Parameters:
+  /// - context: The build context for constructing widgets.
+  ///
+  /// Returns: Widget representing the complete view.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,7 +106,10 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
 
                         // centre le texte saisi dans le champ
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
                         decoration: InputDecoration(
                           labelText: "Titre (optionnel)",
                           filled: true,
@@ -112,7 +125,9 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
                         ),
                         validator: (value) {
                           // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
-                          if (value == null || value.trim().isEmpty || value == '-') {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              value == '-') {
                             return 'Champ requis';
                           }
                           return null;
@@ -153,21 +168,24 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
     );
   }
 
+  /// Validate user inputs for maturity and gauge values.
+  ///
+  /// Returns: bool - true if all inputs are valid, false otherwise.
   bool checkInputs() {
     int? actualLove = int.tryParse(_actualMaturiteController.text);
     int? actualJauge = int.tryParse(_actualJaugeController.text);
-    if (actualJauge == null ||
-        actualLove == null) {
+    if (actualJauge == null || actualLove == null) {
       showSnackBar("Au moins une valeur est manquante.");
       return false;
     }
-    if (actualLove < 0 ||
-        actualLove > 20000) {
+    // Validate maturity range
+    if (actualLove < 0 || actualLove > 20000) {
       showSnackBar(
         "La valeur d'abreuvoir doit être comprise entre 0 et 20'000.",
       );
       return false;
     }
+    // Validate gauge range
     if (actualJauge < 0 || actualJauge > 100000) {
       showSnackBar(
         "La jauge d'abreuvoir doit être comprise entre 0 et 100000.",
@@ -177,21 +195,28 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
     return true;
   }
 
+  /// Parse input values and compute the required timer duration.
+  ///
+  /// Returns: void
   void handleValues() {
     int? actualLove = int.tryParse(_actualMaturiteController.text);
     int? actualAbreuvoirJauge = int.tryParse(_actualJaugeController.text);
-    int seconds = getStatTime(
-      actualLove!,
-      actualAbreuvoirJauge!,
-    );
+    int seconds = getStatTime(actualLove!, actualAbreuvoirJauge!);
     handleTimer(seconds);
   }
 
+  /// Handle timer creation or display insufficient gauge dialog.
+  ///
+  /// Parameters:
+  /// - seconds: The computed timer duration in seconds; -1 indicates insufficient gauge.
+  ///
+  /// Returns: void
   void handleTimer(int seconds) {
     if (seconds == -1) {
+      // Calculate attainable maturity with current gauge
       int realValue =
           int.parse(_actualMaturiteController.text) +
-              int.parse(_actualJaugeController.text);
+          int.parse(_actualJaugeController.text);
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -236,21 +261,21 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
         ),
       );
       return;
-    }
-    else {
+    } else {
+      // Create timer and extract hours, minutes, seconds components
       Map<String, int> res = createTimer(seconds, _titleController.text);
       int timerHours = res['hours']!;
       int timerMinutes = res['minutes']!;
       int timerSeconds = res['seconds']!;
       String title = _titleController.text;
-      if (title.isEmpty){
+      if (title.isEmpty) {
         title = "";
       }
       String message = 'Timer "$title" créé: ';
-      if (timerHours != 0){
+      if (timerHours != 0) {
         message += "$timerHours heures, ";
       }
-      if (timerMinutes != 0){
+      if (timerMinutes != 0) {
         message += "$timerMinutes minutes, ";
       }
       message += "$timerSeconds secondes.";
@@ -258,12 +283,26 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
     }
   }
 
+  /// Display a SnackBar notification with the given message.
+  ///
+  /// Parameters:
+  /// - message: The text to display in the SnackBar.
+  ///
+  /// Returns: void
   void showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Build a numeric input field that accepts signed integers.
+  ///
+  /// Parameters:
+  /// - controller: TextEditingController for managing the field's value.
+  /// - label: Display label for the field.
+  /// - hint: Optional hint text for the field.
+  ///
+  /// Returns: Widget - a TextFormField configured for numeric input.
   Widget _buildNumberField({
     required TextEditingController controller,
     required String label,
@@ -306,15 +345,23 @@ class _AbreuvoirViewState extends State<AbreuvoirView> {
   }
 }
 
-// Formatter personnalisé pour autoriser uniquement une chaîne vide, un tiret seul '-' ou un entier éventuellement négatif.
+/// Custom input formatter that allows only signed integers (optional minus sign and digits).
 class SignedNumberInputFormatter extends TextInputFormatter {
   final RegExp _regExp = RegExp(r'^-?\d*$');
 
+  /// Format text input to allow only optional leading minus and digits.
+  ///
+  /// Parameters:
+  /// - oldValue: Previous TextEditingValue before the change.
+  /// - newValue: Candidate TextEditingValue with the new input.
+  ///
+  /// Returns: TextEditingValue - either the new value if valid or the old value.
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Accept input only if it matches the signed number pattern
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;
     }

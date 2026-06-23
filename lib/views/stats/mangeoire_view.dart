@@ -12,14 +12,15 @@ class MangeoireView extends StatefulWidget {
 }
 
 class _MangeoireViewState extends State<MangeoireView> {
-  final TextEditingController _actualLevelController =
-  TextEditingController();
-  final TextEditingController _actualXpController =
-  TextEditingController();
+  final TextEditingController _actualLevelController = TextEditingController();
+  final TextEditingController _actualXpController = TextEditingController();
   final TextEditingController _actualJaugeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  /// Dispose of text controllers to free resources.
+  ///
+  /// Returns: void
   @override
   void dispose() {
     _actualLevelController.dispose();
@@ -28,6 +29,12 @@ class _MangeoireViewState extends State<MangeoireView> {
     super.dispose();
   }
 
+  /// Build the widget tree for the Mangeoire view.
+  ///
+  /// Parameters:
+  /// - context: The build context for constructing widgets.
+  ///
+  /// Returns: Widget representing the complete view.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,13 +51,11 @@ class _MangeoireViewState extends State<MangeoireView> {
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              // padding vertical réduit pour diminuer l'espace au-dessus du titre
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   mainAxisSize: MainAxisSize.min,
-                  // centre horizontalement les enfants (les SizedBox contenant les champs)
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
@@ -61,20 +66,15 @@ class _MangeoireViewState extends State<MangeoireView> {
                         color: Colors.black87,
                       ),
                     ),
-                    // espacement réduit entre le titre et l'image
                     const SizedBox(height: 16),
-                    // Image SVG centrée sous le titre
                     Center(
                       child: SvgPicture.asset(
                         'assets/icons/wheat-icon.svg',
-                        // remplacez par le SVG souhaité
                         width: 120,
                         height: 120,
                         fit: BoxFit.contain,
-                        // ne pas forcer la couleur ici pour respecter la couleur de l'asset
                       ),
                     ),
-                    // espacement global réduit entre l'image et le premier champ
                     const SizedBox(height: 40),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
@@ -92,7 +92,6 @@ class _MangeoireViewState extends State<MangeoireView> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Champ 3 - Actual Caresseur Jauge
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: _buildNumberField(
@@ -105,10 +104,11 @@ class _MangeoireViewState extends State<MangeoireView> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: TextFormField(
                         controller: _titleController,
-
-                        // centre le texte saisi dans le champ
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
                         decoration: InputDecoration(
                           labelText: "Titre (optionnel)",
                           filled: true,
@@ -123,8 +123,9 @@ class _MangeoireViewState extends State<MangeoireView> {
                           ),
                         ),
                         validator: (value) {
-                          // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
-                          if (value == null || value.trim().isEmpty || value == '-') {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              value == '-') {
                             return 'Champ requis';
                           }
                           return null;
@@ -132,13 +133,12 @@ class _MangeoireViewState extends State<MangeoireView> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    // Bouton Valider (ne fait rien pour l'instant)
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFFDCFFDF), // violet
+                          backgroundColor: const Color(0xFFDCFFDF),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -165,47 +165,67 @@ class _MangeoireViewState extends State<MangeoireView> {
     );
   }
 
+  /// Validate level, XP, and gauge inputs.
+  ///
+  /// Returns: bool - true if all inputs are valid, false otherwise.
   bool checkInputs() {
     int? actualXp = int.tryParse(_actualXpController.text);
     int? actualLevel = int.tryParse(_actualLevelController.text);
     int? actualJauge = int.tryParse(_actualJaugeController.text);
-    if (actualJauge == null ||
-        actualXp == null || actualLevel == null) {
+    if (actualJauge == null || actualXp == null || actualLevel == null) {
       showSnackBar("Au moins une valeur est manquante.");
       return false;
     }
-    if (actualXp < 0 ) {
-      showSnackBar(
-        "L'xp de la monture doit être positive.",
-      );
+    // Validate XP is not negative
+    if (actualXp < 0) {
+      showSnackBar("L'xp de la monture doit être positive.");
       return false;
     }
+    // Validate gauge range
     if (actualJauge < 0 || actualJauge > 100000) {
       showSnackBar(
         "La jauge de mangeoire doit être comprise entre 0 et 100000.",
       );
       return false;
     }
+    // Validate level range
     if (actualLevel < 0 || actualLevel > 200) {
-      showSnackBar(
-        "Le niveau de la monture doit être compris entre 0 et 200.",
-      );
+      showSnackBar("Le niveau de la monture doit être compris entre 0 et 200.");
       return false;
     }
     return true;
   }
 
+  /// Parse input values and compute timer duration based on XP info.
+  ///
+  /// Returns: void
   void handleValues() {
     int? actualLevel = int.tryParse(_actualLevelController.text);
     int? actualXp = int.tryParse(_actualXpController.text);
     int? actualMangeoireJauge = int.tryParse(_actualJaugeController.text);
-    Map<String, int> res = getXpInfos(actualLevel!, actualXp!, actualMangeoireJauge!);
+    // Get XP info which includes time and final level
+    Map<String, int> res = getXpInfos(
+      actualLevel!,
+      actualXp!,
+      actualMangeoireJauge!,
+    );
     handleTimer(res['time']!);
   }
 
+  /// Handle timer creation or display level 200 achievement dialog.
+  ///
+  /// Parameters:
+  /// - seconds: The computed timer duration in seconds.
+  ///
+  /// Returns: void
   void handleTimer(int seconds) {
-    Map <String, int> res = getXpInfos(int.parse(_actualLevelController.text), int.parse(_actualXpController.text), int.parse(_actualJaugeController.text));
-    if (res['finalLevel'] != 200){
+    Map<String, int> res = getXpInfos(
+      int.parse(_actualLevelController.text),
+      int.parse(_actualXpController.text),
+      int.parse(_actualJaugeController.text),
+    );
+    // Check if level 200 is not reachable with current gauge
+    if (res['finalLevel'] != 200) {
       int realValue = res['finalLevel']!;
       showDialog<void>(
         context: context,
@@ -244,19 +264,23 @@ class _MangeoireViewState extends State<MangeoireView> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Map<String, int> res = createTimer(seconds, _titleController.text);
+                  // User chose to create timer anyway with attainable level
+                  Map<String, int> res = createTimer(
+                    seconds,
+                    _titleController.text,
+                  );
                   int timerHours = res['hours']!;
                   int timerMinutes = res['minutes']!;
                   int timerSeconds = res['seconds']!;
                   String title = _titleController.text;
-                  if (title.isEmpty){
+                  if (title.isEmpty) {
                     title = "";
                   }
                   String message = 'Timer "$title" créé: ';
-                  if (timerHours != 0){
+                  if (timerHours != 0) {
                     message += "$timerHours heures, ";
                   }
-                  if (timerMinutes != 0){
+                  if (timerMinutes != 0) {
                     message += "$timerMinutes minutes, ";
                   }
                   message += "$timerSeconds secondes.";
@@ -269,21 +293,23 @@ class _MangeoireViewState extends State<MangeoireView> {
         ),
       );
       return;
-    }
-    else {
+    } else {
+      // Level 200 is achievable, create timer with success message
       Map<String, int> res = createTimer(seconds, _titleController.text);
       int timerHours = res['hours']!;
       int timerMinutes = res['minutes']!;
       int timerSeconds = res['seconds']!;
       String title = _titleController.text;
-      if (title.isEmpty){
+      if (title.isEmpty) {
         title = "";
       }
-      String message = title.isEmpty ? 'Niveau 200 atteignable.\n\n Timer créé: ' : 'Niveau 200 atteignable.\n\n Timer "$title" créé: ';
-      if (timerHours != 0){
+      String message = title.isEmpty
+          ? 'Niveau 200 atteignable.\n\n Timer créé: '
+          : 'Niveau 200 atteignable.\n\n Timer "$title" créé: ';
+      if (timerHours != 0) {
         message += "$timerHours heures, ";
       }
-      if (timerMinutes != 0){
+      if (timerMinutes != 0) {
         message += "$timerMinutes minutes, ";
       }
       message += "$timerSeconds secondes.";
@@ -291,12 +317,26 @@ class _MangeoireViewState extends State<MangeoireView> {
     }
   }
 
+  /// Display a SnackBar notification with the given message.
+  ///
+  /// Parameters:
+  /// - message: The text to display in the SnackBar.
+  ///
+  /// Returns: void
   void showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Build a numeric input field that accepts signed integers.
+  ///
+  /// Parameters:
+  /// - controller: TextEditingController for managing the field's value.
+  /// - label: Display label for the field.
+  /// - hint: Optional hint text for the field.
+  ///
+  /// Returns: Widget - a TextFormField configured for numeric input.
   Widget _buildNumberField({
     required TextEditingController controller,
     required String label,
@@ -304,14 +344,12 @@ class _MangeoireViewState extends State<MangeoireView> {
   }) {
     return TextFormField(
       controller: controller,
-      // clavier numérique avec signe autorisé
       keyboardType: const TextInputType.numberWithOptions(
         decimal: false,
         signed: true,
       ),
-      // autorise uniquement chiffres et un tiret '-' initial (gestionée par le formatter ci-dessous)
+      // Allow only digits and optional leading minus sign
       inputFormatters: <TextInputFormatter>[SignedNumberInputFormatter()],
-      // centre le texte saisi dans le champ
       textAlign: TextAlign.center,
       style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
@@ -329,7 +367,6 @@ class _MangeoireViewState extends State<MangeoireView> {
         ),
       ),
       validator: (value) {
-        // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
         if (value == null || value.trim().isEmpty || value == '-') {
           return 'Champ requis';
         }
@@ -339,15 +376,23 @@ class _MangeoireViewState extends State<MangeoireView> {
   }
 }
 
-// Formatter personnalisé pour autoriser uniquement une chaîne vide, un tiret seul '-' ou un entier éventuellement négatif.
+/// Custom input formatter that allows only signed integers (optional minus sign and digits).
 class SignedNumberInputFormatter extends TextInputFormatter {
   final RegExp _regExp = RegExp(r'^-?\d*$');
 
+  /// Format text input to allow only optional leading minus and digits.
+  ///
+  /// Parameters:
+  /// - oldValue: Previous TextEditingValue before the change.
+  /// - newValue: Candidate TextEditingValue with the new input.
+  ///
+  /// Returns: TextEditingValue - either the new value if valid or the old value.
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Accept input only if it matches the signed number pattern
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;
     }

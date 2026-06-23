@@ -14,13 +14,16 @@ class CaresseurView extends StatefulWidget {
 
 class _CaresseurViewState extends State<CaresseurView> {
   final TextEditingController _actualSerenityController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _wantedSerenityController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _actualJaugeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  /// Dispose of text controllers to free resources.
+  ///
+  /// Returns: void
   @override
   void dispose() {
     _actualSerenityController.dispose();
@@ -29,11 +32,20 @@ class _CaresseurViewState extends State<CaresseurView> {
     super.dispose();
   }
 
+  /// Build the widget tree for the Caresseur view.
+  ///
+  /// Parameters:
+  /// - context: The build context for constructing widgets.
+  ///
+  /// Returns: Widget representing the complete view.
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        image: DecorationImage(image: AssetImage('assets/images/background_purple.jpeg'), fit: BoxFit.cover),
+        image: DecorationImage(
+          image: AssetImage('assets/images/background_purple.jpeg'),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -42,13 +54,11 @@ class _CaresseurViewState extends State<CaresseurView> {
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              // padding vertical réduit pour diminuer l'espace au-dessus du titre
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   mainAxisSize: MainAxisSize.min,
-                  // centre horizontalement les enfants (les SizedBox contenant les champs)
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
@@ -59,20 +69,15 @@ class _CaresseurViewState extends State<CaresseurView> {
                         color: Colors.black87,
                       ),
                     ),
-                    // espacement réduit entre le titre et l'image
                     const SizedBox(height: 16),
-                    // Image SVG centrée sous le titre
                     Center(
                       child: SvgPicture.asset(
                         'assets/icons/feather-icon.svg',
-                        // remplacez par le SVG souhaité
                         width: 120,
                         height: 120,
                         fit: BoxFit.contain,
-                        // ne pas forcer la couleur ici pour respecter la couleur de l'asset
                       ),
                     ),
-                    // espacement global réduit entre l'image et le premier champ
                     const SizedBox(height: 40),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
@@ -81,9 +86,7 @@ class _CaresseurViewState extends State<CaresseurView> {
                         label: 'Sérénité actuelle',
                       ),
                     ),
-                    // Champ 1 - Actual Serenity
                     const SizedBox(height: 12),
-                    // Champ 2 - Wanted Serenity
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: _buildNumberField(
@@ -92,7 +95,6 @@ class _CaresseurViewState extends State<CaresseurView> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Champ 3 - Actual Caresseur Jauge
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: _buildNumberField(
@@ -105,10 +107,11 @@ class _CaresseurViewState extends State<CaresseurView> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: TextFormField(
                         controller: _titleController,
-
-                        // centre le texte saisi dans le champ
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
                         decoration: InputDecoration(
                           labelText: "Titre (optionnel)",
                           filled: true,
@@ -123,8 +126,9 @@ class _CaresseurViewState extends State<CaresseurView> {
                           ),
                         ),
                         validator: (value) {
-                          // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
-                          if (value == null || value.trim().isEmpty || value == '-') {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              value == '-') {
                             return 'Champ requis';
                           }
                           return null;
@@ -132,13 +136,12 @@ class _CaresseurViewState extends State<CaresseurView> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    // Bouton Valider (ne fait rien pour l'instant)
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color(0xFFFFDFFA), // violet
+                          backgroundColor: const Color(0xFFFFDFFA),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -165,6 +168,9 @@ class _CaresseurViewState extends State<CaresseurView> {
     );
   }
 
+  /// Validate serenity and gauge inputs.
+  ///
+  /// Returns: bool - true if all inputs are valid, false otherwise.
   bool checkInputs() {
     int? actualSerenity = int.tryParse(_actualSerenityController.text);
     int? wantedSerenity = int.tryParse(_wantedSerenityController.text);
@@ -175,6 +181,7 @@ class _CaresseurViewState extends State<CaresseurView> {
       showSnackBar("Au moins une valeur est manquante.");
       return false;
     }
+    // Validate serenity range
     if (actualSerenity < -5000 ||
         actualSerenity > 5000 ||
         wantedSerenity < -5000 ||
@@ -184,6 +191,7 @@ class _CaresseurViewState extends State<CaresseurView> {
       );
       return false;
     }
+    // Check if actual serenity is greater than wanted serenity (indicates this should be baffeur)
     if (actualSerenity > wantedSerenity) {
       showDialog(
         context: context,
@@ -228,6 +236,7 @@ class _CaresseurViewState extends State<CaresseurView> {
       );
       return false;
     }
+    // Validate gauge range
     if (actualJauge < 0 || actualJauge > 100000) {
       showSnackBar(
         "La jauge de caresseur doit être comprise entre 0 et 100000.",
@@ -237,6 +246,9 @@ class _CaresseurViewState extends State<CaresseurView> {
     return true;
   }
 
+  /// Parse input values and compute the required timer duration.
+  ///
+  /// Returns: void
   void handleValues() {
     int? actualSerenity = int.tryParse(_actualSerenityController.text);
     int? wantedSerenity = int.tryParse(_wantedSerenityController.text);
@@ -249,11 +261,18 @@ class _CaresseurViewState extends State<CaresseurView> {
     handleTimer(seconds);
   }
 
+  /// Handle timer creation or display insufficient gauge dialog.
+  ///
+  /// Parameters:
+  /// - seconds: The computed timer duration in seconds; -1 indicates insufficient gauge.
+  ///
+  /// Returns: void
   void handleTimer(int seconds) {
     if (seconds == -1) {
+      // Calculate attainable serenity with current gauge
       int realValue =
           int.parse(_actualSerenityController.text) +
-              int.parse(_actualJaugeController.text);
+          int.parse(_actualJaugeController.text);
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -298,19 +317,33 @@ class _CaresseurViewState extends State<CaresseurView> {
         ),
       );
       return;
-    }
-    else {
+    } else {
+      // Create timer successfully
       createTimer(seconds, _titleController.text);
       showSnackBar("Timer créé.");
     }
   }
 
+  /// Display a SnackBar notification with the given message.
+  ///
+  /// Parameters:
+  /// - message: The text to display in the SnackBar.
+  ///
+  /// Returns: void
   void showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Build a numeric input field that accepts signed integers.
+  ///
+  /// Parameters:
+  /// - controller: TextEditingController for managing the field's value.
+  /// - label: Display label for the field.
+  /// - hint: Optional hint text for the field.
+  ///
+  /// Returns: Widget - a TextFormField configured for numeric input.
   Widget _buildNumberField({
     required TextEditingController controller,
     required String label,
@@ -318,14 +351,12 @@ class _CaresseurViewState extends State<CaresseurView> {
   }) {
     return TextFormField(
       controller: controller,
-      // clavier numérique avec signe autorisé
       keyboardType: const TextInputType.numberWithOptions(
         decimal: false,
         signed: true,
       ),
-      // autorise uniquement chiffres et un tiret '-' initial (gestionée par le formatter ci-dessous)
+      // Allow only digits and optional leading minus sign
       inputFormatters: <TextInputFormatter>[SignedNumberInputFormatter()],
-      // centre le texte saisi dans le champ
       textAlign: TextAlign.center,
       style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
@@ -343,7 +374,6 @@ class _CaresseurViewState extends State<CaresseurView> {
         ),
       ),
       validator: (value) {
-        // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
         if (value == null || value.trim().isEmpty || value == '-') {
           return 'Champ requis';
         }
@@ -353,15 +383,23 @@ class _CaresseurViewState extends State<CaresseurView> {
   }
 }
 
-// Formatter personnalisé pour autoriser uniquement une chaîne vide, un tiret seul '-' ou un entier éventuellement négatif.
+/// Custom input formatter that allows only signed integers (optional minus sign and digits).
 class SignedNumberInputFormatter extends TextInputFormatter {
   final RegExp _regExp = RegExp(r'^-?\d*$');
 
+  /// Format text input to allow only optional leading minus and digits.
+  ///
+  /// Parameters:
+  /// - oldValue: Previous TextEditingValue before the change.
+  /// - newValue: Candidate TextEditingValue with the new input.
+  ///
+  /// Returns: TextEditingValue - either the new value if valid or the old value.
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Accept input only if it matches the signed number pattern
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;
     }

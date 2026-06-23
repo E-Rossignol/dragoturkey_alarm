@@ -8,21 +8,28 @@ import 'package:dragoturkey_alarm/views/stats/foudroyeur_view.dart';
 import 'package:dragoturkey_alarm/views/stats/mangeoire_view.dart';
 import 'package:flutter/material.dart';
 
-
-
+/// Application entry point.
+///
+/// Initializes and runs the application.
 void main() {
   runApp(MyApp());
 }
 
+/// Root widget for the application.
+///
+/// Sets up routing, theme, and navigation for all screens.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  /// Build the application widget tree.
+  ///
+  /// Returns: Widget - The MaterialApp with configured routes and theme.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/home': (context) => HomeView(), // route nommée pour la page d'accueil
-        '/timers': (context) => const TimersView(), // route nommée pour la liste des timers
+        '/home': (context) => HomeView(),
+        '/timers': (context) => const TimersView(),
         '/caresseur': (context) => const CaresseurView(),
         '/baffeur': (context) => const BaffeurView(),
         '/dragofesse': (context) => const DragofesseView(),
@@ -32,9 +39,7 @@ class MyApp extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       title: 'DOFALARM',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
+      theme: ThemeData(primarySwatch: Colors.green),
       home: HomeView(),
     );
   }

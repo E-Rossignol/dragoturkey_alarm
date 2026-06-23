@@ -13,11 +13,14 @@ class FoudroyeurView extends StatefulWidget {
 
 class _FoudroyeurViewState extends State<FoudroyeurView> {
   final TextEditingController _actualEnduranceController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _actualJaugeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  /// Dispose of text controllers to free resources.
+  ///
+  /// Returns: void
   @override
   void dispose() {
     _actualEnduranceController.dispose();
@@ -25,6 +28,12 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
     super.dispose();
   }
 
+  /// Build the widget tree for the Foudroyeur view.
+  ///
+  /// Parameters:
+  /// - context: The build context for constructing widgets.
+  ///
+  /// Returns: Widget representing the complete view.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -97,7 +106,10 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
 
                         // centre le texte saisi dans le champ
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
                         decoration: InputDecoration(
                           labelText: "Titre (optionnel)",
                           filled: true,
@@ -113,7 +125,9 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
                         ),
                         validator: (value) {
                           // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
-                          if (value == null || value.trim().isEmpty || value == '-') {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              value == '-') {
                             return 'Champ requis';
                           }
                           return null;
@@ -154,21 +168,24 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
     );
   }
 
+  /// Validate endurance and gauge inputs.
+  ///
+  /// Returns: bool - true if all inputs are valid, false otherwise.
   bool checkInputs() {
     int? actualLove = int.tryParse(_actualEnduranceController.text);
     int? actualJauge = int.tryParse(_actualJaugeController.text);
-    if (actualJauge == null ||
-        actualLove == null) {
+    if (actualJauge == null || actualLove == null) {
       showSnackBar("Au moins une valeur est manquante.");
       return false;
     }
-    if (actualLove < 0 ||
-        actualLove > 20000) {
+    // Validate endurance range
+    if (actualLove < 0 || actualLove > 20000) {
       showSnackBar(
         "La valeur d'endurance doit être comprise entre 0 et 20'000.",
       );
       return false;
     }
+    // Validate gauge range
     if (actualJauge < 0 || actualJauge > 100000) {
       showSnackBar(
         "La jauge de foudroyeur doit être comprise entre 0 et 100000.",
@@ -178,21 +195,28 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
     return true;
   }
 
+  /// Parse input values and compute the required timer duration.
+  ///
+  /// Returns: void
   void handleValues() {
     int? actualLove = int.tryParse(_actualEnduranceController.text);
     int? actualCaresseurJauge = int.tryParse(_actualJaugeController.text);
-    int seconds = getStatTime(
-      actualLove!,
-      actualCaresseurJauge!,
-    );
+    int seconds = getStatTime(actualLove!, actualCaresseurJauge!);
     handleTimer(seconds);
   }
 
+  /// Handle timer creation or display insufficient gauge dialog.
+  ///
+  /// Parameters:
+  /// - seconds: The computed timer duration in seconds; -1 indicates insufficient gauge.
+  ///
+  /// Returns: void
   void handleTimer(int seconds) {
     if (seconds == -1) {
+      // Calculate attainable endurance with current gauge
       int realValue =
           int.parse(_actualEnduranceController.text) +
-              int.parse(_actualJaugeController.text);
+          int.parse(_actualJaugeController.text);
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -237,19 +261,33 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
         ),
       );
       return;
-    }
-    else {
+    } else {
+      // Create timer successfully
       createTimer(seconds, _titleController.text);
       showSnackBar("Timer créé.");
     }
   }
 
+  /// Display a SnackBar notification with the given message.
+  ///
+  /// Parameters:
+  /// - message: The text to display in the SnackBar.
+  ///
+  /// Returns: void
   void showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Build a numeric input field that accepts signed integers.
+  ///
+  /// Parameters:
+  /// - controller: TextEditingController for managing the field's value.
+  /// - label: Display label for the field.
+  /// - hint: Optional hint text for the field.
+  ///
+  /// Returns: Widget - a TextFormField configured for numeric input.
   Widget _buildNumberField({
     required TextEditingController controller,
     required String label,
@@ -257,14 +295,12 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
   }) {
     return TextFormField(
       controller: controller,
-      // clavier numérique avec signe autorisé
       keyboardType: const TextInputType.numberWithOptions(
         decimal: false,
         signed: true,
       ),
-      // autorise uniquement chiffres et un tiret '-' initial (gestionée par le formatter ci-dessous)
+      // Allow only digits and optional leading minus sign
       inputFormatters: <TextInputFormatter>[SignedNumberInputFormatter()],
-      // centre le texte saisi dans le champ
       textAlign: TextAlign.center,
       style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
@@ -282,7 +318,6 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
         ),
       ),
       validator: (value) {
-        // Optionnel : champ requis et doit être numérique ou signe seul pendant la saisie
         if (value == null || value.trim().isEmpty || value == '-') {
           return 'Champ requis';
         }
@@ -292,15 +327,23 @@ class _FoudroyeurViewState extends State<FoudroyeurView> {
   }
 }
 
-// Formatter personnalisé pour autoriser uniquement une chaîne vide, un tiret seul '-' ou un entier éventuellement négatif.
+/// Custom input formatter that allows only signed integers (optional minus sign and digits).
 class SignedNumberInputFormatter extends TextInputFormatter {
   final RegExp _regExp = RegExp(r'^-?\d*$');
 
+  /// Format text input to allow only optional leading minus and digits.
+  ///
+  /// Parameters:
+  /// - oldValue: Previous TextEditingValue before the change.
+  /// - newValue: Candidate TextEditingValue with the new input.
+  ///
+  /// Returns: TextEditingValue - either the new value if valid or the old value.
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Accept input only if it matches the signed number pattern
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;
     }
