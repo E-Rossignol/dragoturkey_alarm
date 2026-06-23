@@ -1,90 +1,89 @@
-# Dragoturkey Alarm
+# Dofalarm
 
-Dragoturkey Alarm is a Flutter prototype mobile app that manages various gauges (serenity, endurance, experience, etc.) and local timers. Built as a portfolio project, it demonstrates end-to-end mobile app skills: responsive UI, state management, local persistence, and native integrations such as scheduled notifications.
+Dragoturkey Alarm is a lightweight Flutter prototype mobile app for managing gauges (serenity, endurance, experience, etc.) and persistent local timers with scheduled notifications. Built as a portfolio project, it shows end-to-end mobile skills: responsive UI, service separation, persistence and native notification integration.
 
-## Key Highlights
+## Key highlights
 
-- Modern, responsive UI implemented with Flutter (adaptive layouts, SVG support, image assets).  
-- Clear modular architecture: reusable widgets, view separation, and independent services (timers, notifications, persistence).  
-- Local timers with persistence (SharedPreferences) and scheduled local notifications.  
-- UX polish: numeric input handling (signed keyboard), centered inputs, accessible interactions and consistent visual language.  
-- Code organized for maintainability and testability — suitable for extension and CI integration.
+- Modern, responsive Flutter UI with SVG and image assets.
+- Clear modular architecture: reusable widgets, separated views and services.
+- Local, persistent timers (saved to SharedPreferences) and scheduled local notifications.
+- UX polish: numeric input handling, centered inputs and accessible interactions.
+- Structured for maintainability and testability — ready for extension and CI.
 
 ## Features
 
-- Create and manage persistent local timers (title, creation timestamp, duration).  
-- Real-time display of active timers with cancel/cleanup actions.  
-- Scheduled local notifications and immediate in-app alerts when a timer expires.  
-- Multiple thematic views (Caresseur, Baffeur, etc.) using shared components.  
-- Assets support (SVG, JPEG/PNG) and custom fonts for branding.
+- Create and manage persistent local timers with title, timestamp and duration.
+- Real-time list of active timers with cancel and cleanup actions.
+- Schedule device notifications and show immediate in-app alerts on expiry.
+- Multiple themed views (Caresseur, Baffeur, etc.) using shared components.
+- Asset support (SVG, PNG, JPEG) and custom fonts.
 
-## Screenshot / Demo
+## Demo / Screenshots
 
-Replace with screenshots or a short demo video showcasing the app UI, timer creation, and notification behavior.
+Replace with screenshots or a short demo video showing timer creation, active timers list and notification behavior.
 
-## Tech Stack
+## Tech stack
 
-- Flutter & Dart  
-- flutter_svg for vector assets  
-- flutter_local_notifications for local notifications  
-- SharedPreferences for simple local persistence  
-- Provider / ChangeNotifier (or lightweight state approach) for UI <-> service sync
+- Flutter & Dart
+- `flutter_svg` for vector assets
+- `flutter_local_notifications` for scheduled notifications
+- `shared_preferences` for simple local persistence
+- Lightweight state approach / Provider or `ChangeNotifier` patterns
 
 ## Prerequisites
 
-- Flutter (stable) — recommended: Flutter 3.x or newer  
-- Android SDK (or iOS setup) and an emulator or physical device  
+- Flutter (stable) — recommended recent stable (3.x or newer)
+- Android SDK and an emulator or device (Windows development recommended)
 - Useful commands: `flutter doctor`, `flutter pub get`, `flutter run`
 
-## Quick Start
+## Quick start
 
-1. Clone the repository:  
-   git clone <your-repo-url>  
-2. Install dependencies:  
-   cd dragoturkey_alarm  
-   flutter pub get  
-3. Run the app:  
-   flutter run  
-4. Main routes: `/home`, `/timers`, `/caresseur`, `/baffeur`, `/mangeoire`, etc.
+1. Clone the repository:
+   git clone <your-repo-url>
+
+2. Install dependencies:
+   cd dragoturkey_alarm
+   flutter pub get
+
+3. Run the app:
+   flutter run
+
+4. Main routes: `/home`, `/timers`, and themed views under `lib/views/stats/`.
 
 ## Developer utilities
 
-- Timers are persisted as JSON in SharedPreferences. Use logs or emulator file explorer for debugging.  
-- Helpful commands:  
-  - `flutter run --verbose` for detailed runtime logs  
-  - `flutter analyze` for static analysis
+- Timers are persisted as JSON in SharedPreferences. Use logs or emulator device file explorer for debugging stored JSON.
+- Helpful commands:
+    - `flutter run --verbose` for detailed runtime logs
+    - `flutter analyze` for static checks
 
-## Project structure (important files)
+## Important files and structure
 
-- `lib/main.dart` — app entry point and named routes.  
-- `lib/views/routes/home_view.dart` — main dashboard.  
-- `lib/views/routes/timers_view.dart` — create and list local timers.  
-- `lib/views/stats/*_view.dart` — domain-specific views (Caresseur, Baffeur, etc.).  
-- `lib/services/timer_service.dart` — timer logic, persistence, orchestration.  
-- `lib/services/notification_service.dart` — wrapper for flutter_local_notifications (init, schedule, cancel).  
-- `lib/widgets/custom_app_bar.dart` — reusable AppBar component.  
-- `assets/` — SVGs, images, fonts (declare fonts in `pubspec.yaml`).
+- `lib/main.dart` — app entry and route registration.
+- `lib/services/timer_service.dart` — timer lifecycle, persistence, orchestration.
+- `lib/services/notification_service.dart` — wrapper around `flutter_local_notifications` (init, schedule, cancel).
+- `lib/services/helper.dart` and `lib/services/experience_table.dart` — helper utilities and domain data.
+- `lib/views/routes/home_view.dart` and `lib/views/routes/timers_view.dart` — primary UI screens.
+- `lib/widgets/custom_app_bar.dart` — reusable AppBar.
+- `assets/` — fonts, icons and images declared in `pubspec.yaml`.
+- `android/` — native Android project and configuration for notifications.
 
 ## What this project demonstrates
 
-This repository highlights practical skills valuable to employers:
-- Proficient Flutter development for performant, polished mobile UI.  
-- Modular design separating UI and business logic for maintainability.  
-- Native integration experience (local notifications, Android intent nuances).  
-- Robust state persistence and restoration (timers survive app restarts).  
-- Problem solving: handling exact vs inexact alarms, foreground/background behavior, and platform exceptions.  
-- Attention to UX details and accessibility.  
-- Readiness for team workflows: routes, services, and components are structured for collaboration and testing.
+- Practical Flutter development for polished mobile UI and UX.
+- Separation of UI and business logic for maintainability and testability.
+- Native integration experience with scheduled notifications and platform intent handling.
+- Persistent state restoration so timers survive app restarts.
+- Attention to usability details and accessibility.
 
-## Next steps / Suggestions
+## Next steps / suggestions
 
-- Add unit and widget tests around TimerService and NotificationService.  
-- Integrate platform-specific permission flows and handle background execution constraints on Android/iOS.  
-- Improve notification channels and custom sounds per timer type.  
-- Add E2E tests and CI pipelines.
+- Add unit and widget tests around `TimerService` and `NotificationService`.
+- Implement platform permission flows and background execution improvements (Android exact alarms handling).
+- Improve notification channels and add custom sounds per timer type.
+- Add CI pipelines and end-to-end tests.
 
 ## Contact
 
-Replace with your contact information before sharing publicly:  
-Your Name — your.email@example.com  
-Repository: <your-repo-url>
+Erwan Rossignol — erwan@hotmail.ch  
+Repository: <https://github.com/E-Rossignol/dragoturkey_alarm.git>
