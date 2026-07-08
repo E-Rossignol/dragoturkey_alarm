@@ -20,7 +20,7 @@ Dragoturkey Alarm is a lightweight Flutter prototype mobile app for managing gau
 
 ## Demo / Screenshots
 
-Replace with screenshots or a short demo video showing timer creation, active timers list and notification behavior.
+A live demonstration video is available at: [https://youtu.be/pLepkqXHlfg](https://youtu.be/pLepkqXHlfg)
 
 ## Tech stack
 
